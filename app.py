@@ -113,7 +113,7 @@ def animate(i):
 init()
 for i in range(2, len(timeseries_results_cum)):
     animate(i)
-    time.sleep(0.05)
+    time.sleep(0.01)
 
 st.text(f"Average total number infected: {total_number_infected}")
 
