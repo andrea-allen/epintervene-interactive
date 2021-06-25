@@ -1,6 +1,6 @@
-matplotlib==3.4.2
 numpy==1.21.0
 streamlit==0.83.0
 networkx
+matplotlib==3.2.2
 -i https://test.pypi.org/simple/
 epintervene==0.0.32
