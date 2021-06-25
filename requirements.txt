@@ -1,4 +1,4 @@
-altair
-streamlit
-matplotlib
+-i https://pypi.org/ altair
+-i https://pypi.org/ streamlit
+-i https://pypi.org/ matplotlib
 -i https://test.pypi.org/simple/ epintervene==0.0.32
