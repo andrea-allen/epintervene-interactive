@@ -2,8 +2,6 @@ import streamlit as st
 import time
 import numpy as np
 from epintervene.simobjects import simulation
-from epintervene.simobjects import extended_simulation
-from epintervene.simobjects import network
 import matplotlib.pyplot as plt
 
 progress_bar = st.sidebar.progress(0)
