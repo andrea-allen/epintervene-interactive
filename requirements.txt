@@ -1,6 +1,6 @@
-numpy
-streamlit==0.82.0
-networkx
-matplotlib==3.2.2
+numpy==1.18.5
+streamlit==0.83.0
+networkx @ file:///tmp/build/80754af9/networkx_1594377231366/work
+matplotlib @ file:///opt/concourse/worker/volumes/live/59859a4b-794b-4c9f-51fd-a0ac1d1ab595/volume/matplotlib-base_1592846058943/work
 -i https://test.pypi.org/simple/
 epintervene==0.0.32
