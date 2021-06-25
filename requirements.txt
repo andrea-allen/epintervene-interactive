@@ -1,5 +1,5 @@
 numpy
-streamlit
+streamlit==0.82.0
 networkx
 matplotlib==3.2.2
 -i https://test.pypi.org/simple/
