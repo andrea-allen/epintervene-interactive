@@ -3,3 +3,4 @@ epintervene==0.0.32
 altair
 streamlit
 matplotlib
+networkx
