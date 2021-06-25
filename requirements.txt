@@ -1,6 +1,0 @@
-numpy==1.18.5
-streamlit==0.83.0
-networkx
-matplotlib
--i https://test.pypi.org/simple/
-epintervene==0.0.32

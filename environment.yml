@@ -1,0 +1,8 @@
+channles:
+  - conda-forge
+dependencies:
+  - numpy==1.18.1
+  - matplotlib
+  - networkx
+  - pip:
+      - -i https://test.pypi.org/simple/ epintervene==0.0.32
