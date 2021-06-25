@@ -2,7 +2,7 @@ import streamlit as st
 import time
 import numpy as np
 # from epintervene.simobjects import simulation
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 progress_bar = st.sidebar.progress(0)
 status_text = st.sidebar.empty()
