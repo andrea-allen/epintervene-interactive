@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import sample_networks
 
 st.title("Epidemic SIR Simulations")
-st.text("For best experience while under development... select 'Settings' from the top-right menu and select the 'Dark' theme")
+st.text("For best experience while under development... select 'Settings' from the top-right \nmenu and select the 'Dark' theme")
 
 progress_bar = st.sidebar.progress(0)
 status_text = st.sidebar.empty()
