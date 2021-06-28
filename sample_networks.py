@@ -11,8 +11,6 @@ def balanced_tree():
     nb = network.NetworkBuilder
     graph = nx.generators.balanced_tree(2, 5)
     adjlist = nb.create_adjacency_list(graph)
-    print(adjlist)
-    print(len(adjlist))
     return adjlist
 
 def small_world(n, k, p):
