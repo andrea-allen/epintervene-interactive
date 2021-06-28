@@ -79,7 +79,6 @@ total_number_infected = total_number_infected/int(num_sims)
 # fig, ax = plt.subplots(figsize=(16,8))
 fig, ax = plt.subplots()
 tc = st.get_option('theme.textColor')
-print(tc)
 ax.spines['bottom'].set_color(tc)
 ax.spines['bottom'].set_visible(True)
 ax.spines['top'].set_color(tc)
@@ -123,7 +122,7 @@ def animate(i):
     the_plot.pyplot(fig)
 
 init()
-for i in range(2, len(timeseries_results_cum)):
+for i in range(2, len(timeseries_results_cum), 4):
     animate(i)
     time.sleep(0.01)
 
