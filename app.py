@@ -130,7 +130,7 @@ if intervention_type != "None":
         intv_recovered_results += timeseries_results[2]
         intv_total_number_infected += (timeseries_results[1][-1] + timeseries_results[2][-1])
         progress_bar.progress(s/int(num_sims))
-        status_text.text("Running Simulations:\n %s%% Complete" % (int(s/int(num_sims) * 100)))
+        status_text.text("Running intervention simulations:\n %s%% Complete" % (int(s/int(num_sims) * 100)))
     status_text.text(f"{int(num_sims)} Simulations Complete")
     intv_timeseries_results_cum = intv_timeseries_results_cum/int(num_sims)
     intv_infected_results = intv_infected_results/int(num_sims)
@@ -165,9 +165,10 @@ x = np.arange(0, max(timeseries_results_cum))
 
 nanfilled = [np.nan] * len(timeseries_results_cum)
 nanfilled_rec = [np.nan] * len(timeseries_results_cum)
+nanfilled_intv = [np.nan] * len(intv_timeseries_results_cum)
 line, = ax.plot(timeseries_results_cum, nanfilled, color=hex_list[3], label='infected')
 if intervention_type != "None":
-    line_intv, = ax.plot(intv_timeseries_results_cum, nanfilled, color=hex_list[4], label='intervention')
+    line_intv, = ax.plot(intv_timeseries_results_cum, nanfilled_intv, color=hex_list[4], label='intervention')
 line_rec, = ax.plot(timeseries_results_cum, nanfilled_rec, color=hex_list[2], label='recovered')
 ax.set_ylim(0, max(infected_results)+10)
 ax.set_xlim(0, custom_time_limit)
