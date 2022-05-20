@@ -2,6 +2,7 @@ import streamlit as st
 import time
 import numpy as np
 from epintervene.simobjects import simulation
+from epintervene.simobjects import extended_simulation
 import matplotlib.pyplot as plt
 import sample_networks
 
@@ -99,6 +100,46 @@ infected_results = infected_results/int(num_sims)
 recovered_results = recovered_results/int(num_sims)
 total_number_infected = total_number_infected/int(num_sims)
 
+########
+# Second set of simulations to show interventions
+# After callibration, single run to then set length of time series result so results can be ensembled
+if intervention_type != "None":
+    sim = extended_simulation.RandomRolloutSimulation(N=len(list_of_lists), adjlist=list_of_lists)
+    sim.set_uniform_gamma(gamma_value)
+    sim.set_uniform_beta(beta_value)
+    sim.configure_intervention(intervention_gen_list=[3], beta_redux_list=[0], proportion_reduced_list=[0.3])
+    sim.run_sim(wait_for_recovery=True)
+    custom_time_limit = max_time_result+20
+    timeseries_results = sim.tabulate_continuous_time(time_buckets=100, custom_range=True, custom_t_lim=custom_time_limit)
+
+    # Ensemble based on num_sims:
+    intv_timeseries_results_cum = timeseries_results[0]
+    intv_infected_results = timeseries_results[1]
+    intv_recovered_results = timeseries_results[2]
+    intv_total_number_infected = timeseries_results[1][-1] + timeseries_results[2][-1]
+
+    for s in range(1, int(num_sims)+1):
+        sim = extended_simulation.RandomRolloutSimulation(N=len(list_of_lists), adjlist=list_of_lists)
+        sim.set_uniform_gamma(gamma_value)
+        sim.set_uniform_beta(beta_value)
+        sim.configure_intervention(intervention_gen_list=[3], beta_redux_list=[0], proportion_reduced_list=[0.3])
+        sim.run_sim(wait_for_recovery=True)
+        timeseries_results = sim.tabulate_continuous_time(time_buckets=100, custom_range=True, custom_t_lim=custom_time_limit)
+        intv_timeseries_results_cum += timeseries_results[0]
+        intv_infected_results += timeseries_results[1]
+        intv_recovered_results += timeseries_results[2]
+        intv_total_number_infected += (timeseries_results[1][-1] + timeseries_results[2][-1])
+        progress_bar.progress(s/int(num_sims))
+        status_text.text("Running Simulations:\n %s%% Complete" % (int(s/int(num_sims) * 100)))
+    status_text.text(f"{int(num_sims)} Simulations Complete")
+    intv_timeseries_results_cum = intv_timeseries_results_cum/int(num_sims)
+    intv_infected_results = intv_infected_results/int(num_sims)
+    intv_recovered_results = intv_recovered_results/int(num_sims)
+    intv_total_number_infected = intv_total_number_infected/int(num_sims)
+
+
+#######
+
 # fig, ax = plt.subplots(figsize=(16,8))
 fig, ax = plt.subplots()
 tc = st.get_option('theme.textColor')
@@ -125,6 +166,8 @@ x = np.arange(0, max(timeseries_results_cum))
 nanfilled = [np.nan] * len(timeseries_results_cum)
 nanfilled_rec = [np.nan] * len(timeseries_results_cum)
 line, = ax.plot(timeseries_results_cum, nanfilled, color=hex_list[3], label='infected')
+if intervention_type != "None":
+    line_intv, = ax.plot(intv_timeseries_results_cum, nanfilled, color=hex_list[4], label='intervention')
 line_rec, = ax.plot(timeseries_results_cum, nanfilled_rec, color=hex_list[2], label='recovered')
 ax.set_ylim(0, max(infected_results)+10)
 ax.set_xlim(0, custom_time_limit)
