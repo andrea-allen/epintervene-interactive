@@ -17,7 +17,9 @@ gamma_value = st.sidebar.slider('Select a gamma, or recovery rate, value',0.0, 1
 st.sidebar.text("Below, select either a random network type \nor upload your own adjacency list. If \nyou select 'None of these' and don't upload"
                 "\nanything, the simulation will use a default network.")
 network_type = st.sidebar.selectbox('Random network', ('Erdos-Renyi', 'Balanced Tree', 'Small world', 'None of these'))
-intervention_type = st.sidebar.selectbox('None', ('Random vaccination', 'Targeted vaccination'))
+st.sidebar.text("Leave intervention type as None for a regular disease simulation. If desired, select Random or "
+                "Targeted vaccination to see the effects of these policies on disease spread.")
+intervention_type = st.sidebar.selectbox('Intervention', ('None', 'Random vaccination', 'Targeted vaccination'))
 st.sidebar.text("You can upload your own adjacency list below.\n"
                 "Make sure it is a .txt file, in the form\n"
                 "0,1,2\n1,0\n2,0\n and is symmetric.(Support for non-symmetric coming soon)")
