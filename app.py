@@ -67,41 +67,6 @@ if intervention_type != "None":
     intv_sim = simulations.Simulator("random_rollout", rollout_gens=[3], rollout_proportns=[0.3])
     intv_sim.simulate(num_sims=num_sims, gamma=gamma_value, beta=beta_value, adj_list=list_of_lists,
                       progress_bar=progress_bar, status_text=status_text)
-
-    # sim = extended_simulation.RandomRolloutSimulation(N=len(list_of_lists), adjlist=list_of_lists)
-    # sim.set_uniform_gamma(gamma_value)
-    # sim.set_uniform_beta(beta_value)
-    # sim.configure_intervention(intervention_gen_list=[3], beta_redux_list=[0], proportion_reduced_list=[0.3])
-    # sim.run_sim(wait_for_recovery=True)
-    # custom_time_limit = simulator.max_time+20
-    # timeseries_results = sim.tabulate_continuous_time(time_buckets=100, custom_range=True, custom_t_lim=custom_time_limit)
-    #
-    # # Ensemble based on num_sims:
-    # intv_timeseries_results_cum = timeseries_results[0]
-    # intv_infected_results = timeseries_results[1]
-    # intv_recovered_results = timeseries_results[2]
-    # intv_total_number_infected = timeseries_results[1][-1] + timeseries_results[2][-1]
-    #
-    # for s in range(1, int(num_sims)+1):
-    #     sim = extended_simulation.RandomRolloutSimulation(N=len(list_of_lists), adjlist=list_of_lists)
-    #     sim.set_uniform_gamma(gamma_value)
-    #     sim.set_uniform_beta(beta_value)
-    #     sim.configure_intervention(intervention_gen_list=[3], beta_redux_list=[0], proportion_reduced_list=[0.3])
-    #     sim.run_sim(wait_for_recovery=True)
-    #     timeseries_results = sim.tabulate_continuous_time(time_buckets=100, custom_range=True, custom_t_lim=custom_time_limit)
-    #     intv_timeseries_results_cum += timeseries_results[0]
-    #     intv_infected_results += timeseries_results[1]
-    #     intv_recovered_results += timeseries_results[2]
-    #     intv_total_number_infected += (timeseries_results[1][-1] + timeseries_results[2][-1])
-    #     progress_bar.progress(s/int(num_sims))
-    #     status_text.text("Running intervention simulations:\n %s%% Complete" % (int(s/int(num_sims) * 100)))
-    # status_text.text(f"{int(num_sims)} Simulations Complete")
-    # intv_timeseries_results_cum = intv_timeseries_results_cum/int(num_sims)
-    # intv_infected_results = intv_infected_results/int(num_sims)
-    # intv_recovered_results = intv_recovered_results/int(num_sims)
-    # intv_total_number_infected = intv_total_number_infected/int(num_sims)
-
-
 #######
 
 # fig, ax = plt.subplots(figsize=(16,8))
