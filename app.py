@@ -10,7 +10,7 @@ st.title("Epidemic SIR Simulations")
 progress_bar = st.sidebar.progress(0)
 status_text = st.sidebar.empty()
 
-num_sims = st.sidebar.radio("Number of simulations", ("1", "10", "100", "1000"))
+num_sims = st.sidebar.radio("Number of simulations", ("1", "10", "100", "500", "1000"))
 num_nodes = st.sidebar.number_input("Number of nodes", min_value=10, max_value=5000, value=100)
 beta_value = st.sidebar.slider('Select a beta, or infection rate, value',0.0, 1.0, value=0.5)
 gamma_value = st.sidebar.slider('Select a gamma, or recovery rate, value',0.01, 1.0, value=0.1)
