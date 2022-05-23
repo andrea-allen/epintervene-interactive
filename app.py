@@ -1,7 +1,6 @@
 import streamlit as st
 import time
 import numpy as np
-from epintervene.simobjects import extended_simulation
 import matplotlib.pyplot as plt
 import sample_networks
 import simulations
@@ -18,12 +17,14 @@ gamma_value = st.sidebar.slider('Select a gamma, or recovery rate, value',0.0, 1
 st.sidebar.text("Below, select either a random network type \nor upload your own adjacency list. If \nyou select 'None of these' and don't upload"
                 "\nanything, the simulation will use a default network.")
 network_type = st.sidebar.selectbox('Random network', ('Erdos-Renyi', 'Balanced Tree', 'Small world', 'None of these'))
-st.sidebar.text("Leave intervention type as None for a regular disease simulation. If desired, select Random or "
-                "Targeted vaccination to see the effects of these policies on disease spread.")
+st.sidebar.text("Leave intervention type as None \nfor a regular disease simulation. \nIf desired, select Random or \n"
+                "Targeted vaccination to see\n the effects of these \npolicies on disease spread.")
 intervention_type = st.sidebar.selectbox('Intervention', ('None', 'Random vaccination', 'Targeted vaccination'))
+intervention_gens = st.sidebar.multiselect('Intervention generations',[2, 3, 4, 5, 6, 7, 8])
+intervention_increment = st.sidebar.slider('Select % population\nincrement for vaccination',0.0, 1.0, value=0.1)
 st.sidebar.text("You can upload your own adjacency list below.\n"
                 "Make sure it is a .txt file, in the form\n"
-                "0,1,2\n1,0\n2,0\n and is symmetric.(Support for non-symmetric coming soon)")
+                "0,1,2\n1,0\n2,0\n and is symmetric.")
 uploaded_file = st.sidebar.file_uploader("Upload an adjacency list text file")
 if uploaded_file is not None:
     list_of_lists = []
@@ -63,8 +64,15 @@ custom_time_limit = simulator.max_time+20
 ########
 # Second set of simulations to show interventions
 # After callibration, single run to then set length of time series result so results can be ensembled
-if intervention_type != "None":
-    intv_sim = simulations.Simulator("random_rollout", rollout_gens=[3], rollout_proportns=[0.3])
+if intervention_type == "Random vaccination":
+    intv_sim = simulations.Simulator("random_rollout", rollout_gens=sorted(intervention_gens),
+                                     rollout_proportns=list([intervention_increment for i in intervention_gens]))
+    intv_sim.simulate(num_sims=num_sims, gamma=gamma_value, beta=beta_value, adj_list=list_of_lists,
+                      progress_bar=progress_bar, status_text=status_text)
+
+if intervention_type == "Targeted vaccination":
+    intv_sim = simulations.Simulator("targeted_rollout", rollout_gens=sorted(intervention_gens),
+                                     rollout_proportns=list([intervention_increment for i in intervention_gens]))
     intv_sim.simulate(num_sims=num_sims, gamma=gamma_value, beta=beta_value, adj_list=list_of_lists,
                       progress_bar=progress_bar, status_text=status_text)
 #######

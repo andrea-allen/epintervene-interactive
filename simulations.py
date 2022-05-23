@@ -19,7 +19,6 @@ class SimType:
             return simulation.Simulation(N=len(self.adj_list), adj_list=self.adj_list)
         elif self.sim_type == "random_rollout":
             sim = extended_simulation.RandomRolloutSimulation(N=len(self.adj_list), adjlist=self.adj_list)
-            print(self.rollout_gens)
             sim.configure_intervention(intervention_gen_list=self.rollout_gens, beta_redux_list=self.rollout_proportns, proportion_reduced_list=self.rollout_proportns)
             return sim
         elif self.sim_type == "targeted_rollout":
