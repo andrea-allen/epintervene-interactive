@@ -19,7 +19,8 @@ class SimType:
             return simulation.Simulation(N=len(self.adj_list), adj_list=self.adj_list)
         elif self.sim_type == "random_rollout":
             sim = extended_simulation.RandomRolloutSimulation(N=len(self.adj_list), adjlist=self.adj_list)
-            sim.configure_intervention(self.rollout_gens, self.rollout_proportns, self.rollout_proportns)
+            print(self.rollout_gens)
+            sim.configure_intervention(intervention_gen_list=self.rollout_gens, beta_redux_list=self.rollout_proportns, proportion_reduced_list=self.rollout_proportns)
             return sim
         elif self.sim_type == "targeted_rollout":
             sim = extended_simulation.TargetedRolloutSimulation(N=len(self.adj_list), adjlist=self.adj_list)
@@ -60,7 +61,8 @@ class Simulator:
         self.calibrate(adj_list=adj_list, gamma=gamma, beta=beta)
         # single
         # sim = simulation.Simulation(N=len(adj_list), adj_list=adj_list)
-        sim = SimType(self.sim_type, adj_list).sim_obj
+        sim = SimType(self.sim_type, adj_list, rollout_gens=self.rollout_gens,
+                          rollout_proportns=self.rollout_proportns).sim_obj
         sim.set_uniform_gamma(gamma)
         sim.set_uniform_beta(beta)
         sim.run_sim(wait_for_recovery=True)
@@ -75,7 +77,8 @@ class Simulator:
 
         for s in range(1, int(num_sims) + 1):
             # sim = simulation.Simulation(N=len(adj_list), adj_list=adj_list)
-            sim = SimType(self.sim_type, adj_list).sim_obj
+            sim = SimType(self.sim_type, adj_list, rollout_gens=self.rollout_gens,
+                          rollout_proportns=self.rollout_proportns).sim_obj
             sim.set_uniform_gamma(gamma)
             sim.set_uniform_beta(beta)
             sim.run_sim(wait_for_recovery=True)
