@@ -178,7 +178,8 @@ the_plot = st.pyplot(fig)
 def init():  # give a clean slate to start
     line.set_ydata([np.nan] * len(x))
     line_rec.set_ydata([np.nan] * len(x))
-    line_intv.set_ydata([np.nan] * len(x))
+    if intervention_type != "None":
+        line_intv.set_ydata([np.nan] * len(x))
     lgnd = ax.legend(loc='upper left', frameon=False)
     for lines, text in zip(lgnd.get_lines(), lgnd.get_texts()):
         text.set_color(lines.get_color())
