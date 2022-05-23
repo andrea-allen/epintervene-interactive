@@ -76,7 +76,7 @@ simulator.simulate(num_sims=num_sims, gamma=gamma_value, beta=beta_value, adj_li
 # sim.set_uniform_gamma(gamma_value)
 # sim.set_uniform_beta(beta_value)
 # sim.run_sim(wait_for_recovery=True)
-# custom_time_limit = max_time_result+20
+custom_time_limit = simulator.max_time+20
 # timeseries_results = sim.tabulate_continuous_time(time_buckets=100, custom_range=True, custom_t_lim=custom_time_limit)
 #
 #
