@@ -5,30 +5,38 @@ from epintervene.simobjects import extended_simulation
 import matplotlib.pyplot as plt
 import sample_networks
 
-class SimType:
 
-    def __init__(self, sim_type, adj_list):
+class SimType:
+    def __init__(self, sim_type, adj_list, rollout_gens=None, rollout_proportns=None):
         self.sim_type = sim_type
         self.adj_list = adj_list
+        self.rollout_gens = rollout_gens
+        self.rollout_proportns = rollout_proportns
         self.sim_obj = self.get_sim_object()
 
     def get_sim_object(self):
         if self.sim_type == "standard":
             return simulation.Simulation(N=len(self.adj_list), adj_list=self.adj_list)
         elif self.sim_type == "random_rollout":
-            return extended_simulation.RandomRolloutSimulation(N=len(self.adj_list), adjlist=self.adj_list)
+            sim = extended_simulation.RandomRolloutSimulation(N=len(self.adj_list), adjlist=self.adj_list)
+            sim.configure_intervention(self.rollout_gens, self.rollout_proportns, self.rollout_proportns)
+            return sim
         elif self.sim_type == "targeted_rollout":
-            return extended_simulation.TargetedRolloutSimulation(N=len(self.adj_list), adjlist=self.adj_list)
+            sim = extended_simulation.TargetedRolloutSimulation(N=len(self.adj_list), adjlist=self.adj_list)
+            sim.configure_intervention(self.rollout_gens, self.rollout_proportns, self.rollout_proportns)
+            return sim
 
 
 class Simulator:
-    def __init__(self, sim_type):
+    def __init__(self, sim_type, rollout_gens=None, rollout_proportns=None):
         self.sim_type = sim_type
         self.max_time = 0
         self.timeseries_results_cum = None
         self.infected_results = None
         self.recovered_results = None
         self.total_number_infected = None
+        self.rollout_gens = rollout_gens
+        self.rollout_proportns = rollout_proportns
 
     def calibrate(self, adj_list, gamma, beta):
         # Initial simulation to callibrate custom time limit and x_range for plot, runs five times and takes max
@@ -37,7 +45,8 @@ class Simulator:
             # progress_bar.progress(1 / int(num_sims))
             # status_text.text("Running Simulations:\n %s%% Complete" % (int(1 / int(num_sims) * 100)))
             # sim = simulation.Simulation(N=len(adj_list), adj_list=adj_list)
-            sim = SimType(self.sim_type, adj_list).sim_obj
+            sim = SimType(self.sim_type, adj_list, rollout_gens=self.rollout_gens,
+                          rollout_proportns=self.rollout_proportns).sim_obj
             sim.set_uniform_gamma(gamma)
             sim.set_uniform_beta(beta)
             sim.run_sim(wait_for_recovery=True)
