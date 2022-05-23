@@ -13,13 +13,13 @@ status_text = st.sidebar.empty()
 num_sims = st.sidebar.radio("Number of simulations", ("1", "10", "100", "1000"))
 num_nodes = st.sidebar.number_input("Number of nodes", min_value=10, max_value=5000, value=100)
 beta_value = st.sidebar.slider('Select a beta, or infection rate, value',0.0, 1.0, value=0.5)
-gamma_value = st.sidebar.slider('Select a gamma, or recovery rate, value',0.0, 1.0, value=0.1)
+gamma_value = st.sidebar.slider('Select a gamma, or recovery rate, value',0.01, 1.0, value=0.1)
 st.sidebar.text("Below, select either a random network type \nor upload your own adjacency list. If \nyou select 'None of these' and don't upload"
                 "\nanything, the simulation will use a default network.")
 network_type = st.sidebar.selectbox('Random network', ('Erdos-Renyi', 'Balanced Tree', 'Small world', 'None of these'))
 st.sidebar.text("Leave intervention type as None \nfor a regular disease simulation. \nIf desired, select Random or \n"
                 "Targeted vaccination to see\n the effects of these \npolicies on disease spread.")
-intervention_type = st.sidebar.selectbox('Intervention', ('None', 'Random vaccination', 'Targeted vaccination'))
+intervention_type = st.sidebar.selectbox('Intervention', ('None', 'Random vaccination', 'Targeted vaccination', 'All'))
 intervention_gens = st.sidebar.multiselect('Intervention generations',[2, 3, 4, 5, 6, 7, 8])
 intervention_increment = st.sidebar.slider('Select % population\nincrement for vaccination',0.0, 1.0, value=0.1)
 st.sidebar.text("You can upload your own adjacency list below.\n"
@@ -55,6 +55,7 @@ if uploaded_file is None and network_type == 'None of these':
 
 hex_list = ['#0173b2', '#56b4e9',  '#029e73', '#ece133', '#de8f05', '#d55e00', '#cc78bc', '#fbafe4', '#ca9161',  '#949494',  ]
 
+## Simulations for the standard simulation
 simulator = simulations.Simulator("standard")
 simulator.simulate(num_sims=num_sims, gamma=gamma_value, beta=beta_value, adj_list=list_of_lists,
                    progress_bar=progress_bar, status_text=status_text)
@@ -63,18 +64,31 @@ custom_time_limit = simulator.max_time+20
 
 ########
 # Second set of simulations to show interventions
-# After callibration, single run to then set length of time series result so results can be ensembled
-if intervention_type == "Random vaccination":
-    intv_sim = simulations.Simulator("random_rollout", rollout_gens=sorted(intervention_gens),
+def run_rand():
+    rand_intv_sim = simulations.Simulator("random_rollout", rollout_gens=sorted(intervention_gens),
                                      rollout_proportns=list([intervention_increment for i in intervention_gens]))
-    intv_sim.simulate(num_sims=num_sims, gamma=gamma_value, beta=beta_value, adj_list=list_of_lists,
+    rand_intv_sim.simulate(num_sims=num_sims, gamma=gamma_value, beta=beta_value, adj_list=list_of_lists,
                       progress_bar=progress_bar, status_text=status_text)
+    return rand_intv_sim
+
+def run_targ():
+    targ_intv_sim = simulations.Simulator("targeted_rollout", rollout_gens=sorted(intervention_gens),
+                                          rollout_proportns=list([intervention_increment for i in intervention_gens]))
+    targ_intv_sim.simulate(num_sims=num_sims, gamma=gamma_value, beta=beta_value, adj_list=list_of_lists,
+                           progress_bar=progress_bar, status_text=status_text)
+    return targ_intv_sim
+
+
+if intervention_type == "Random vaccination":
+    rand_intv_sim = run_rand()
 
 if intervention_type == "Targeted vaccination":
-    intv_sim = simulations.Simulator("targeted_rollout", rollout_gens=sorted(intervention_gens),
-                                     rollout_proportns=list([intervention_increment for i in intervention_gens]))
-    intv_sim.simulate(num_sims=num_sims, gamma=gamma_value, beta=beta_value, adj_list=list_of_lists,
-                      progress_bar=progress_bar, status_text=status_text)
+    targ_intv_sim = run_targ()
+
+if intervention_type == "All":
+    rand_intv_sim = run_rand()
+    targ_intv_sim = run_targ()
+
 #######
 
 # fig, ax = plt.subplots(figsize=(16,8))
@@ -103,9 +117,21 @@ x = np.arange(0, max(simulator.timeseries_results_cum))
 nanfilled = [np.nan] * len(simulator.timeseries_results_cum)
 nanfilled_rec = [np.nan] * len(simulator.timeseries_results_cum)
 line, = ax.plot(simulator.timeseries_results_cum, nanfilled, color=hex_list[3], label='infected')
-if intervention_type != "None":
-    nanfilled_intv = [np.nan] * len(intv_sim.timeseries_results_cum)
-    line_intv, = ax.plot(intv_sim.timeseries_results_cum, nanfilled_intv, color=hex_list[4], label='intervention')
+if intervention_type == "Random vaccination":
+    nanfilled_rand_intv = [np.nan] * len(rand_intv_sim.timeseries_results_cum)
+    line_rand_intv, = ax.plot(rand_intv_sim.timeseries_results_cum, nanfilled_rand_intv, color=hex_list[4],
+                              label='random vaccination')
+if intervention_type == "Targeted vaccination":
+    nanfilled_targ_intv = [np.nan] * len(targ_intv_sim.timeseries_results_cum)
+    line_targ_intv, = ax.plot(targ_intv_sim.timeseries_results_cum, nanfilled_targ_intv, color=hex_list[5],
+                              label='targeted vaccination')
+if intervention_type == "All":
+    nanfilled_rand_intv = [np.nan] * len(rand_intv_sim.timeseries_results_cum)
+    line_rand_intv, = ax.plot(rand_intv_sim.timeseries_results_cum, nanfilled_rand_intv, color=hex_list[4],
+                              label='random vaccination')
+    nanfilled_targ_intv = [np.nan] * len(targ_intv_sim.timeseries_results_cum)
+    line_targ_intv, = ax.plot(targ_intv_sim.timeseries_results_cum, nanfilled_targ_intv, color=hex_list[5],
+                              label='targeted vaccination')
 line_rec, = ax.plot(simulator.timeseries_results_cum, nanfilled_rec, color=hex_list[2], label='recovered')
 ax.set_ylim(0, max(simulator.infected_results)+10)
 ax.set_xlim(0, custom_time_limit)
@@ -115,8 +141,13 @@ the_plot = st.pyplot(fig)
 def init():  # give a clean slate to start
     line.set_ydata([np.nan] * len(x))
     line_rec.set_ydata([np.nan] * len(x))
-    if intervention_type != "None":
-        line_intv.set_ydata([np.nan] * len(x))
+    if intervention_type == "Random vaccination":
+        line_rand_intv.set_ydata([np.nan] * len(x))
+    if intervention_type == "Targeted vaccination":
+        line_targ_intv.set_ydata([np.nan] * len(x))
+    if intervention_type == "All":
+        line_rand_intv.set_ydata([np.nan] * len(x))
+        line_targ_intv.set_ydata([np.nan] * len(x))
     lgnd = ax.legend(loc='upper left', frameon=False)
     for lines, text in zip(lgnd.get_lines(), lgnd.get_texts()):
         text.set_color(lines.get_color())
@@ -126,9 +157,17 @@ def animate(i):
     nanfilled_rec[:i] = simulator.recovered_results[:i]
     line.set_ydata(nanfilled)
     line_rec.set_ydata(nanfilled_rec)
-    if intervention_type != "None":
-        nanfilled_intv[:i] = intv_sim.infected_results[:i]
-        line_intv.set_ydata(nanfilled_intv)
+    if intervention_type == "Random vaccination":
+        nanfilled_rand_intv[:i] = rand_intv_sim.infected_results[:i]
+        line_rand_intv.set_ydata(nanfilled_rand_intv)
+    if intervention_type == "Targeted vaccination":
+        nanfilled_targ_intv[:i] = targ_intv_sim.infected_results[:i]
+        line_targ_intv.set_ydata(nanfilled_targ_intv)
+    if intervention_type == "All":
+        nanfilled_rand_intv[:i] = rand_intv_sim.infected_results[:i]
+        line_rand_intv.set_ydata(nanfilled_rand_intv)
+        nanfilled_targ_intv[:i] = targ_intv_sim.infected_results[:i]
+        line_targ_intv.set_ydata(nanfilled_targ_intv)
     the_plot.pyplot(fig)
 
 init()
