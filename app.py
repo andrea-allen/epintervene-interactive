@@ -131,8 +131,8 @@ nanfilled = [np.nan] * len(simulator.timeseries_results_cum)
 nanfilled_rec = [np.nan] * len(simulator.timeseries_results_cum)
 line, = ax.plot(simulator.timeseries_results_cum, nanfilled, color=hex_list[3], label='infected')
 if intervention_type != "None":
-    nanfilled_intv = [np.nan] * len(intv_sim.intv_timeseries_results_cum)
-    line_intv, = ax.plot(intv_sim.intv_timeseries_results_cum, nanfilled_intv, color=hex_list[4], label='intervention')
+    nanfilled_intv = [np.nan] * len(intv_sim.timeseries_results_cum)
+    line_intv, = ax.plot(intv_sim.timeseries_results_cum, nanfilled_intv, color=hex_list[4], label='intervention')
 line_rec, = ax.plot(simulator.timeseries_results_cum, nanfilled_rec, color=hex_list[2], label='recovered')
 ax.set_ylim(0, max(simulator.infected_results)+10)
 ax.set_xlim(0, custom_time_limit)
@@ -154,7 +154,7 @@ def animate(i):
     line.set_ydata(nanfilled)
     line_rec.set_ydata(nanfilled_rec)
     if intervention_type != "None":
-        nanfilled_intv[:i] = intv_sim.intv_infected_results[:i]
+        nanfilled_intv[:i] = intv_sim.infected_results[:i]
         line_intv.set_ydata(nanfilled_intv)
     the_plot.pyplot(fig)
 
