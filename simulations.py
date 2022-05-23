@@ -5,9 +5,25 @@ from epintervene.simobjects import extended_simulation
 import matplotlib.pyplot as plt
 import sample_networks
 
+class SimType:
+
+    def __init__(self, sim_type, adj_list):
+        self.sim_type = sim_type
+        self.adj_list = adj_list
+        self.sim_obj = self.get_sim_object()
+
+    def get_sim_object(self):
+        if self.sim_type == "standard":
+            return simulation.Simulation(N=len(self.adj_list), adj_list=self.adj_list)
+        elif self.sim_type == "random_rollout":
+            return extended_simulation.RandomRolloutSimulation(N=len(self.adj_list), adjlist=self.adj_list)
+        elif self.sim_type == "targeted_rollout":
+            return extended_simulation.TargetedRolloutSimulation(N=len(self.adj_list), adjlist=self.adj_list)
+
 
 class Simulator:
-    def __init__(self):
+    def __init__(self, sim_type):
+        self.sim_type = sim_type
         self.max_time = 0
         self.timeseries_results_cum = None
         self.infected_results = None
@@ -20,7 +36,8 @@ class Simulator:
         for t in range(5):
             # progress_bar.progress(1 / int(num_sims))
             # status_text.text("Running Simulations:\n %s%% Complete" % (int(1 / int(num_sims) * 100)))
-            sim = simulation.Simulation(N=len(adj_list), adj_list=adj_list)
+            # sim = simulation.Simulation(N=len(adj_list), adj_list=adj_list)
+            sim = SimType(self.sim_type, adj_list).sim_obj
             sim.set_uniform_gamma(gamma)
             sim.set_uniform_beta(beta)
             sim.run_sim(wait_for_recovery=True)
@@ -33,7 +50,8 @@ class Simulator:
     def simulate(self, num_sims, gamma, beta, adj_list, progress_bar, status_text):
         self.calibrate(adj_list=adj_list, gamma=gamma, beta=beta)
         # single
-        sim = simulation.Simulation(N=len(adj_list), adj_list=adj_list)
+        # sim = simulation.Simulation(N=len(adj_list), adj_list=adj_list)
+        sim = SimType(self.sim_type, adj_list).sim_obj
         sim.set_uniform_gamma(gamma)
         sim.set_uniform_beta(beta)
         sim.run_sim(wait_for_recovery=True)
@@ -47,7 +65,8 @@ class Simulator:
         total_number_infected = timeseries_results[1][-1] + timeseries_results[2][-1]
 
         for s in range(1, int(num_sims) + 1):
-            sim = simulation.Simulation(N=len(adj_list), adj_list=adj_list)
+            # sim = simulation.Simulation(N=len(adj_list), adj_list=adj_list)
+            sim = SimType(self.sim_type, adj_list).sim_obj
             sim.set_uniform_gamma(gamma)
             sim.set_uniform_beta(beta)
             sim.run_sim(wait_for_recovery=True)

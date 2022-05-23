@@ -1,7 +1,6 @@
 import streamlit as st
 import time
 import numpy as np
-from epintervene.simobjects import simulation
 from epintervene.simobjects import extended_simulation
 import matplotlib.pyplot as plt
 import sample_networks
@@ -55,54 +54,11 @@ if uploaded_file is None and network_type == 'None of these':
 
 hex_list = ['#0173b2', '#56b4e9',  '#029e73', '#ece133', '#de8f05', '#d55e00', '#cc78bc', '#fbafe4', '#ca9161',  '#949494',  ]
 
-simulator = simulations.Simulator()
+simulator = simulations.Simulator("standard")
 simulator.simulate(num_sims=num_sims, gamma=gamma_value, beta=beta_value, adj_list=list_of_lists,
                    progress_bar=progress_bar, status_text=status_text)
-# Initial simulation to callibrate custom time limit and x_range for plot, runs five times and takes max
-# max_time_result = 0
-# for t in range(5):
-#     progress_bar.progress(1/int(num_sims))
-#     status_text.text("Running Simulations:\n %s%% Complete" % (int(1/int(num_sims) * 100)))
-#     sim = simulation.Simulation(N=len(list_of_lists), adj_list=list_of_lists)
-#     sim.set_uniform_gamma(gamma_value)
-#     sim.set_uniform_beta(beta_value)
-#     sim.run_sim(wait_for_recovery=True)
-#     timeseries_results = sim.tabulate_continuous_time(time_buckets=100)
-#     if np.max(timeseries_results[0]) > max_time_result:
-#         max_time_result = np.max(timeseries_results[0])
-#
-# # After callibration, single run to then set length of time series result so results can be ensembled
-# sim = simulation.Simulation(N=len(list_of_lists), adj_list=list_of_lists)
-# sim.set_uniform_gamma(gamma_value)
-# sim.set_uniform_beta(beta_value)
-# sim.run_sim(wait_for_recovery=True)
+
 custom_time_limit = simulator.max_time+20
-# timeseries_results = sim.tabulate_continuous_time(time_buckets=100, custom_range=True, custom_t_lim=custom_time_limit)
-#
-#
-# # Ensemble based on num_sims:
-# timeseries_results_cum = timeseries_results[0]
-# infected_results = timeseries_results[1]
-# recovered_results = timeseries_results[2]
-# total_number_infected = timeseries_results[1][-1] + timeseries_results[2][-1]
-#
-# for s in range(1, int(num_sims)+1):
-#     sim = simulation.Simulation(N=len(list_of_lists), adj_list=list_of_lists)
-#     sim.set_uniform_gamma(gamma_value)
-#     sim.set_uniform_beta(beta_value)
-#     sim.run_sim(wait_for_recovery=True)
-#     timeseries_results = sim.tabulate_continuous_time(time_buckets=100, custom_range=True, custom_t_lim=custom_time_limit)
-#     timeseries_results_cum += timeseries_results[0]
-#     infected_results += timeseries_results[1]
-#     recovered_results += timeseries_results[2]
-#     total_number_infected += (timeseries_results[1][-1] + timeseries_results[2][-1])
-#     progress_bar.progress(s/int(num_sims))
-#     status_text.text("Running Simulations:\n %s%% Complete" % (int(s/int(num_sims) * 100)))
-# status_text.text(f"{int(num_sims)} Simulations Complete")
-# timeseries_results_cum = timeseries_results_cum/int(num_sims)
-# infected_results = infected_results/int(num_sims)
-# recovered_results = recovered_results/int(num_sims)
-# total_number_infected = total_number_infected/int(num_sims)
 
 ########
 # Second set of simulations to show interventions
